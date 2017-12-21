@@ -2,7 +2,7 @@ package tsp;
 
 import java.util.concurrent.Semaphore;
 
-public class TobaccoSmokersProblem {
+public class TobaccoSmokersProblemDeadLockTest {
 
 	static int count;
 

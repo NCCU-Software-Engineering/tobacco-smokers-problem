@@ -2,16 +2,14 @@ package tsp;
 
 import java.util.concurrent.Semaphore;
 
-import javax.swing.JFrame;
-
 public class TobaccoSmokersProblem {
 
 	static int count;
 
-	static String[] resources_name = new String[] { ("tobacco"), ("paper"), ("matche") };
+	static String[] resources_name = new String[] { ("tobacco"), ("paper"), ("matches") };
 	static final int TIBACCO = 0;
 	static final int PAPER = 1;
-	static final int MATCHE = 2;
+	static final int MATCHES = 2;
 
 	static Semaphore TS = new Semaphore(1);
 	static Semaphore AS = new Semaphore(0);
@@ -20,14 +18,14 @@ public class TobaccoSmokersProblem {
 		Agent agent = new Agent();
 		Smoker no_tobacco_smoker = new Smoker(TIBACCO);
 		Smoker no_paper_smoker = new Smoker(PAPER);
-		Smoker no_matche_smoker = new Smoker(MATCHE);
+		Smoker no_matches_smoker = new Smoker(MATCHES);
 
 		MyGUI.start();
-		
+
 		agent.start();
 		no_tobacco_smoker.start();
 		no_paper_smoker.start();
-		no_matche_smoker.start();
+		no_matches_smoker.start();
 	}
 
 	private static class Agent extends Thread {
@@ -41,7 +39,6 @@ public class TobaccoSmokersProblem {
 				try {
 					sleep((int) (Math.random() * 10000));
 				} catch (InterruptedException e) {
-
 				}
 				try {
 					TS.acquire();

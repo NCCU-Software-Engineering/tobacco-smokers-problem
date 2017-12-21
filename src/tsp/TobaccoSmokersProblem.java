@@ -2,6 +2,8 @@ package tsp;
 
 import java.util.concurrent.Semaphore;
 
+import javax.swing.JFrame;
+
 public class TobaccoSmokersProblem {
 
 	static int count;
@@ -20,6 +22,8 @@ public class TobaccoSmokersProblem {
 		Smoker no_paper_smoker = new Smoker(PAPER);
 		Smoker no_matche_smoker = new Smoker(MATCHE);
 
+		MyGUI.start();
+		
 		agent.start();
 		no_tobacco_smoker.start();
 		no_paper_smoker.start();

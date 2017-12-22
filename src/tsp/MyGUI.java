@@ -74,26 +74,27 @@ public class MyGUI {
 	private static void initTwo() {
 		// 設定執行畫面
 		panel2.setLayout(new BorderLayout());
-		panel2.setBackground(Color.YELLOW);
+		panel2.setBackground(Color.WHITE);
 
-		BufferedImage myPicture = null;
-		File f = new File("D:/Desktop/img/table.png");
+		BufferedImage agent = null;
+		BufferedImage table = null;
+		BufferedImage papers = null;
+		BufferedImage tobacco = null;
+		BufferedImage matches = null;
 		try {
-			myPicture = ImageIO.read(f);
+			agent = ImageIO.read(new File("D:/Desktop/img/agent.jpg"));
+			table = ImageIO.read(new File("D:/Desktop/img/table.png"));
+			papers = ImageIO.read(new File("D:/Desktop/img/papers.jpg"));
+			tobacco = ImageIO.read(new File("D:/Desktop/img/tobacco.png"));
+			matches = ImageIO.read(new File("D:/Desktop/img/matches.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		JCheckBox checkbox = new JCheckBox("JCheckBox");
-		JRadioButton radiobutton = new JRadioButton("JRadiobutton");
-		JButton button = new JButton("JButton");
-		JLabel label = new JLabel(new ImageIcon(myPicture));
-		JTextArea textarea = new JTextArea("JTextArea");
-
-		panel2.add(BorderLayout.EAST, checkbox);
-		panel2.add(BorderLayout.WEST, radiobutton);
-		panel2.add(BorderLayout.SOUTH, button);
-		panel2.add(BorderLayout.NORTH, label);
-		panel2.add(BorderLayout.CENTER, textarea);
+		panel2.add(BorderLayout.EAST, new JLabel(new ImageIcon(papers)));
+		panel2.add(BorderLayout.WEST, new JLabel(new ImageIcon(tobacco)));
+		panel2.add(BorderLayout.SOUTH, new JLabel(new ImageIcon(matches)));
+		panel2.add(BorderLayout.NORTH, new JLabel(new ImageIcon(agent)));
+		panel2.add(BorderLayout.CENTER, new JLabel(new ImageIcon(table)));
 	}
 }

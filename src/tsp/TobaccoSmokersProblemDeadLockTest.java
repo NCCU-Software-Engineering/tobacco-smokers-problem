@@ -58,7 +58,7 @@ public class TobaccoSmokersProblemDeadlockTest {
 				catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				//Put two resources to the table.
+				//Put two resources to the table and release the called smoker.
 				System.out.println("Agent puts " + resources_name[_offer1] + " and " + resources_name[_offer2] + " to the table.");
 				Table.putItem(_offer1,_offer2,called_smoker);
 				smokerSemaphore[called_smoker].release();

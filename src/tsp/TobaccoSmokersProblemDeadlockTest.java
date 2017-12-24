@@ -2,7 +2,7 @@ package tsp;
 
 import java.util.concurrent.Semaphore;
 
-public class TobaccoSmokersProblem {
+public class TobaccoSmokersProblemDeadlockTest {
 
 	static int count;
 
@@ -14,13 +14,13 @@ public class TobaccoSmokersProblem {
 	static Semaphore agentSemaphore = new Semaphore(1);
 	static Semaphore[] smokerSemaphore = new Semaphore[3];
 
-	public static MyGUI mygui = new MyGUI("Tobacco Smokers Problem");
+	public static MyGUI mygui = new MyGUI("Tobacco Smokers Problem Deadlock");
 
 	public static void main(String[] args) {
 
-		// smokerSemaphore set 0 to prevent the Deadlock.
+		// smokerSemaphore set 1 to trigger the Deadlock.
 		for (int i = 0; i < smokerSemaphore.length; i++) {
-			smokerSemaphore[i] = new Semaphore(0);
+			smokerSemaphore[i] = new Semaphore(1);
 		}
 
 		Agent paper_matches_agent = new Agent(PAPER, MATCHES, 0);
@@ -53,21 +53,21 @@ public class TobaccoSmokersProblem {
 			while (true) {
 				// Set the random delay time for the agent thread.
 				try {
-					sleep((int) (Math.random() * 6000 + 2000));
+					sleep((int) (Math.random() * 4000 + 2000));
 					agentSemaphore.acquire();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				// Put two resources to the table and release the called smoker.
 				mygui.put(resources_name[_offer1], resources_name[_offer2]);
-				System.out.println(
-						"Agent puts " + resources_name[_offer1] + " and " + resources_name[_offer2] + " to the table.");
-				Table.putItem(_offer1, _offer2);
 				try {
-					sleep(3000);
+					sleep(2000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				System.out.println(
+						"Agent puts " + resources_name[_offer1] + " and " + resources_name[_offer2] + " to the table.");
+				Table.putItem(_offer1, _offer2);
 				smokerSemaphore[called_smoker].release();
 			}
 		}
@@ -90,7 +90,7 @@ public class TobaccoSmokersProblem {
 			while (true) {
 				// Set the random delay time for the smoker thread.
 				try {
-					sleep((int) (Math.random() * 1500 + 1000));
+					sleep((int) (Math.random() * 2000 + 1000));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -126,9 +126,9 @@ public class TobaccoSmokersProblem {
 						System.out.println("Smoker[" + ID + "] takes " + resources_name[_need2] + " from the table");
 						this.completeSmoke = true;
 					} else {
+						mygui.anger(ID);
 						System.out.println("Smoker[" + ID + "] found no " + resources_name[_need2] + " on the table");
 						System.out.println("!!!The Deadlock Happens!!!");
-						mygui.anger(ID);
 					}
 				}
 

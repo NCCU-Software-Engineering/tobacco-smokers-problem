@@ -16,12 +16,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-@ClassInfo (
-createdDate = "Dec 23 2017",
-createdBy = "Lia",
-lastModified = "Dec 23 2013",
-lastModifiedBy = "Lia",
-version = "1.0.0" )
+@ClassInfo(createdDate = "Dec 23 2017", createdBy = "Lia", lastModified = "Dec 23 2013", lastModifiedBy = "Lia", version = "1.0.0")
 public class MyGUI extends JFrame implements Runnable {
 
 	private static final long serialVersionUID = 1L;
@@ -33,8 +28,10 @@ public class MyGUI extends JFrame implements Runnable {
 	private JMenu menu4 = new JMenu("¿ï¶µ");
 	private JPanel panel1;
 	private JPanel panel2;
+
 	private int itemCount;
-	private int moveCount;
+	private int[] moveCount = new int[2];
+	private String[] itemName = new String[2];
 	private int[] itemState = new int[2];
 	private float[][] movePosition = new float[2][2];
 
@@ -42,6 +39,7 @@ public class MyGUI extends JFrame implements Runnable {
 	private ImageIcon agentImg;
 	private ImageIcon manImg;
 	private ImageIcon smokerImg;
+	private ImageIcon angerImg;
 	private ImageIcon tableImg;
 	private ImageIcon papersImg;
 	private ImageIcon tobaccoImg;
@@ -65,28 +63,28 @@ public class MyGUI extends JFrame implements Runnable {
 	private Position tablePosition = new Position(472, 322);
 	private Position[] tableItemPosition = { new Position(500, 240), new Position(600, 240) };
 	// man
-	private Position[] manPosition = { new Position(1100, 400), new Position(0, 400), new Position(550, 725) };
+	private Position[] manPosition = { new Position(0, 400), new Position(1100, 400), new Position(550, 725) };
 	private float[][] itemPosition = new float[2][2];
-	private Position[][] emptyPosition = { { new Position(1000, 300), new Position(1000, 500) }, { new Position(100, 300), new Position(100, 500) },
-			{ new Position(450, 625), new Position(650, 625) } };
+	private Position[][] emptyPosition = { { new Position(100, 300), new Position(100, 500) },
+			{ new Position(1000, 300), new Position(1000, 500) }, { new Position(450, 625), new Position(650, 625) } };
 	// man item
-	private Position papersPosition = new Position(1000, 400);
 	private Position tobaccoPosition = new Position(100, 400);
+	private Position papersPosition = new Position(1000, 400);
 	private Position matchesPosition = new Position(550, 625);
 
-	public MyGUI() {
+	public MyGUI(String title) {
 		super();
 		initImg();
 		initJMenuBar();
 		initOne();
 		initTwo();
 
-		setTitle("Tobacco Smokers Problem");
+		setTitle(title);
 		setSize(1200, 900);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(menuBar);
-		getContentPane().add(panel1);
+		getContentPane().add(panel2);
 		setVisible(true);
 
 		thread = new Thread(this);
@@ -111,8 +109,8 @@ public class MyGUI extends JFrame implements Runnable {
 				if (itemState[i] == 1 || itemState[i] == 3 || itemState[i] == 5) {
 					itemPosition[i][0] += movePosition[i][0];
 					itemPosition[i][1] += movePosition[i][1];
-					moveCount--;
-					if (moveCount < 0) {
+					moveCount[i]--;
+					if (moveCount[i] < 0) {
 						itemState[i]++;
 					}
 				}
@@ -129,6 +127,7 @@ public class MyGUI extends JFrame implements Runnable {
 	private void initImg() {
 		agentImg = new ImageIcon("img/agent.png");
 		manImg = new ImageIcon("img/man.png");
+		angerImg = new ImageIcon("img/anger.png");
 		smokerImg = new ImageIcon("img/smoker.png");
 		tableImg = new ImageIcon("img/table.png");
 		papersImg = new ImageIcon("img/papers.png");
@@ -165,7 +164,6 @@ public class MyGUI extends JFrame implements Runnable {
 			public void paint(Graphics g) {
 				super.paint(g);
 				for (int i = 0; i < itemCount; i++) {
-					System.out.println(itemCount);
 					g.drawImage(itemImg[i], (int) itemPosition[i][0], (int) itemPosition[i][1], null);
 				}
 			}
@@ -210,17 +208,17 @@ public class MyGUI extends JFrame implements Runnable {
 
 		putTobacco.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				put("tobacco");
+
 			}
 		});
 		putMatches.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				put("matches");
+
 			}
 		});
 		putPapers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				put("papers");
+
 			}
 		});
 
@@ -240,32 +238,32 @@ public class MyGUI extends JFrame implements Runnable {
 
 		get11.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				get(0, "tobacco");
+
 			}
 		});
 		get12.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				get(0, "matches");
+
 			}
 		});
 		get13.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				get(0, "papers");
+
 			}
 		});
 		get21.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				get(1, "tobacco");
+
 			}
 		});
 		get22.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				get(1, "matches");
+
 			}
 		});
 		get23.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				get(1, "papers");
+
 			}
 		});
 
@@ -279,17 +277,17 @@ public class MyGUI extends JFrame implements Runnable {
 
 		smokeTobacco.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				smoke("tobacco");
+				smoke(0);
 			}
 		});
 		smokeMatches.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				smoke("matches");
+				smoke(2);
 			}
 		});
 		smokePapers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				smoke("papers");
+				smoke(1);
 			}
 		});
 
@@ -309,106 +307,90 @@ public class MyGUI extends JFrame implements Runnable {
 		menuBar.add(menu4);
 	}
 
-	public void put(String itemName) {
-		if (itemCount < 2) {
-			switch (itemName) {
+	public void put(String item1, String item2) {
+		if (itemCount == 0) {
+			switch (item1) {
 			case "tobacco":
-				itemImg[itemCount] = tobaccoImg.getImage();
+				itemImg[0] = tobaccoImg.getImage();
 				break;
 			case "matches":
-				itemImg[itemCount] = matchesImg.getImage();
+				itemImg[0] = matchesImg.getImage();
 				break;
-			case "papers":
-				itemImg[itemCount] = papersImg.getImage();
+			case "paper":
+				itemImg[0] = papersImg.getImage();
 				break;
 			}
-			itemPosition[itemCount][0] = startPosition.x;
-			itemPosition[itemCount][1] = startPosition.y;
+			switch (item2) {
+			case "tobacco":
+				itemImg[1] = tobaccoImg.getImage();
+				break;
+			case "matches":
+				itemImg[1] = matchesImg.getImage();
+				break;
+			case "paper":
+				itemImg[1] = papersImg.getImage();
+				break;
+			}
 
-			movePosition[itemCount][0] = (tableItemPosition[itemCount].x - itemPosition[itemCount][0]) / 100;
-			movePosition[itemCount][1] = (tableItemPosition[itemCount].y - itemPosition[itemCount][1]) / 100;
-			moveCount = 100;
-			itemState[itemCount] = 1;
-			itemCount++;
+			itemName[0] = item1;
+			itemName[1] = item2;
+
+			itemPosition[0][0] = startPosition.x;
+			itemPosition[0][1] = startPosition.y;
+			itemPosition[1][0] = startPosition.x;
+			itemPosition[1][1] = startPosition.y;
+
+			movePosition[0][0] = (tableItemPosition[0].x - itemPosition[0][0]) / 100;
+			movePosition[0][1] = (tableItemPosition[0].y - itemPosition[0][1]) / 100;
+			movePosition[1][0] = (tableItemPosition[1].x - itemPosition[1][0]) / 100;
+			movePosition[1][1] = (tableItemPosition[1].y - itemPosition[1][1]) / 100;
+
+			moveCount[0] = 100;
+			moveCount[1] = 100;
+
+			itemState[0] = 1;
+			itemState[1] = 1;
+
+			itemCount = 2;
+		} else {
+			System.out.println("too soon1");
 		}
 	}
 
-	public void get(int i, String itemName) {
-		if (itemState[i] == 2) {
-			switch (itemName) {
-			case "tobacco":
-				movePosition[i][0] = (emptyPosition[1][i].x - itemPosition[i][0]) / 100;
-				movePosition[i][1] = (emptyPosition[1][i].y - itemPosition[i][1]) / 100;
-				break;
-			case "matches":
-				movePosition[i][0] = (emptyPosition[2][i].x - itemPosition[i][0]) / 100;
-				movePosition[i][1] = (emptyPosition[2][i].y - itemPosition[i][1]) / 100;
-				break;
-			case "papers":
-				movePosition[i][0] = (emptyPosition[0][i].x - itemPosition[i][0]) / 100;
-				movePosition[i][1] = (emptyPosition[0][i].y - itemPosition[i][1]) / 100;
-				break;
-			}
-			moveCount = 100;
-			itemState[i] = 3;
-		}
-	}
+	public void get(int ID, String item) {
 
-	public void make(String itemName) {
-		if (itemState[0] == 4 && itemState[1] == 4) {
-			switch (itemName) {
-			case "tobacco":
-				movePosition[0][0] = (tobaccoPosition.x - itemPosition[0][0]) / 100;
-				movePosition[0][1] = (tobaccoPosition.y - itemPosition[0][1]) / 100;
-				movePosition[1][0] = (tobaccoPosition.x - itemPosition[1][0]) / 100;
-				movePosition[1][1] = (tobaccoPosition.y - itemPosition[1][1]) / 100;
-				break;
-			case "matches":
-				movePosition[0][0] = (matchesPosition.x - itemPosition[0][0]) / 100;
-				movePosition[0][1] = (matchesPosition.y - itemPosition[0][1]) / 100;
-				movePosition[1][0] = (matchesPosition.x - itemPosition[1][0]) / 100;
-				movePosition[1][1] = (matchesPosition.y - itemPosition[1][1]) / 100;
-				break;
-			case "papers":
-				movePosition[0][0] = (papersPosition.x - itemPosition[0][0]) / 100;
-				movePosition[0][1] = (papersPosition.y - itemPosition[0][1]) / 100;
-				movePosition[1][0] = (papersPosition.x - itemPosition[1][0]) / 100;
-				movePosition[1][1] = (papersPosition.y - itemPosition[1][1]) / 100;
-				break;
-			}
-			moveCount = 100;
-			itemState[0] = 5;
-			itemState[1] = 5;
-		}
-	}
-
-	public void smoke(String itemName) {
 		int i;
-		if (itemState[0] == 4 && itemState[1] == 4) {
-			switch (itemName) {
-			case "tobacco":
-				i = 1;
-				panel2.remove(man[i]);
-				man[i].setIcon(smokerImg);
-				panel2.add(man[i]);
-				repaint();
-				break;
-			case "matches":
-				i = 2;
-				panel2.remove(man[i]);
-				man[i].setIcon(smokerImg);
-				panel2.add(man[i]);
-				repaint();
-				break;
-			case "papers":
-				i = 0;
-				panel2.remove(man[i]);
-				man[i].setIcon(smokerImg);
-				panel2.add(man[i]);
-				repaint();
-				break;
-			}
+		if (item == itemName[0]) {
+			i = 0;
+		} else if (item == itemName[1]) {
+			i = 1;
+		} else {
+			return;
 		}
+
+		movePosition[i][0] = (emptyPosition[ID][i].x - itemPosition[i][0]) / 100;
+		movePosition[i][1] = (emptyPosition[ID][i].y - itemPosition[i][1]) / 100;
+
+		moveCount[i] = 100;
+		itemState[i] = 3;
+	}
+
+	public void smoke(int ID) {
+		if (itemState[0] == 4 && itemState[1] == 4) {
+			panel2.remove(man[ID]);
+			man[ID].setIcon(smokerImg);
+			panel2.add(man[ID]);
+			repaint();
+		} else {
+			System.out.println("too soon3");
+		}
+	}
+
+	public void anger(int ID) {
+		panel2.remove(man[ID]);
+		man[ID].setIcon(angerImg);
+		panel2.add(man[ID]);
+		repaint();
 	}
 
 	public void restart() {
@@ -422,11 +404,11 @@ public class MyGUI extends JFrame implements Runnable {
 		itemState[1] = 0;
 		panel2.repaint();
 	}
-	
+
 	public class Position {
 		public int x;
 		public int y;
-		
+
 		public Position(int x, int y) {
 			this.x = x;
 			this.y = y;

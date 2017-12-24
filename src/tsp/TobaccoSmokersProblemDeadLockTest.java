@@ -2,7 +2,7 @@ package tsp;
 
 import java.util.concurrent.Semaphore;
 
-public class TobaccoSmokersProblemDeadLockTest {
+public class TobaccoSmokersProblemDeadlockTest {
 
 	static int count;
 
@@ -11,88 +11,151 @@ public class TobaccoSmokersProblemDeadLockTest {
 	static final int PAPER = 1;
 	static final int MATCHES = 2;
 
-	static Semaphore TS = new Semaphore(1);
-	static Semaphore AS = new Semaphore(0);
-
+	static Semaphore agentSemaphore = new Semaphore(1);
+	static Semaphore[] smokerSemaphore = new Semaphore[3];
+	
 	public static void main(String[] args) {
-		Agent agent = new Agent();
-		Smoker no_tobacco_smoker = new Smoker(TOBACCO);
-		Smoker no_paper_smoker = new Smoker(PAPER);
-		Smoker no_matches_smoker = new Smoker(MATCHES);
-
-		MyGUI.start();
-
-		agent.start();
-		no_tobacco_smoker.start();
-		no_paper_smoker.start();
-		no_matches_smoker.start();
+		
+		//smokerSemaphore set 1 to trigger the Deadlock.
+		for(int i = 0 ; i < smokerSemaphore.length ; i++) {
+			smokerSemaphore[i] = new Semaphore(1);
+		}
+		
+		Agent tobacco_paper_agent = new Agent(TOBACCO,PAPER,2);
+		Agent paper_matches_agent = new Agent(PAPER,MATCHES,0);
+		Agent matches_tobacco_agent = new Agent(MATCHES,TOBACCO,1);
+		Smoker tobacco_smoker = new Smoker(PAPER,MATCHES,0);
+		Smoker paper_smoker = new Smoker(TOBACCO,MATCHES,1);
+		Smoker matches_smoker = new Smoker(TOBACCO,PAPER,2);
+		
+		//MyGUI.start();
+		
+		tobacco_paper_agent.start();
+		paper_matches_agent.start();
+		matches_tobacco_agent.start();
+		tobacco_smoker.start();
+		paper_smoker.start();
+		matches_smoker.start();
 	}
 
 	private static class Agent extends Thread {
-		public Agent() {
+		private int _offer1,_offer2,called_smoker;
+		
+		public Agent(int offer1,int offer2,int smoker) {
 			super();
+			this._offer1 = offer1;
+			this._offer2 = offer2;
+			this.called_smoker = smoker;
 		}
 
 		public void run() {
 			while (true) {
-				System.out.println("The agent is awake");
+				//Set the random delay time for the agent thread.
 				try {
-					sleep((int) (Math.random() * 10000));
-				} catch (InterruptedException e) {
+					sleep((int) (Math.random() * 8000));
+					agentSemaphore.acquire();
 				}
-				try {
-					TS.acquire();
-				} catch (InterruptedException e) {
+				catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-
-				System.out.println("The agent is running");
-				int item = (int) (Math.random() * 3);
-				Table.put(item);
-
-				TS.release();
+				//Put two resources to the table and release the called smoker.
+				System.out.println("Agent puts " + resources_name[_offer1] + " and " + resources_name[_offer2] + " to the table.");
+				Table.putItem(_offer1,_offer2,called_smoker);
+				smokerSemaphore[called_smoker].release();
 			}
 		}
 	}
 
 	private static class Smoker extends Thread {
-		int _need;
+		private int _need1,_need2;
+		private boolean completeSmoke;
+		private int ID;
 
-		public Smoker(int need) {
+		public Smoker(int need1,int need2,int ID) {
 			super();
-			_need = need;
+			this._need1 = need1;
+			this._need2 = need2;
+			this.ID = ID;
+			this.completeSmoke = false;
 		}
 
 		public void run() {
 			while (true) {
+				//Set the random delay time for the smoker thread.
 				try {
-					sleep((int) (Math.random() * 10000));
+					sleep((int) (Math.random() * 1500));
 				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-				System.out.println("Smoker " + resources_name[_need] + ": queued up for table");
-				if (Table.use(_need)) {
-					System.out.println("Smoker " + _need + " found " + resources_name[_need]);
-					TS.release();
-					System.out.println("Smoker " + _need + " is smoking ");
+				
+				
+				//Random the two needed resources.
+				if((int)(Math.random()*2) == 0) {
+					int temp = this._need1;
+					this._need1 = this._need2;
+					this._need2 = temp;
+				}
+				
+				//Take the first needed resource.
+				if(Table.isItemExisted(_need1)) {
+					try {
+						smokerSemaphore[ID].acquire();
+					}
+					catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					Table.getItem(_need1);
+					System.out.println("Smoker["+ID+"] takes " + resources_name[_need1] + " from the table");
+					
+					//Set delay for taking the second needed resource.
+					try {
+						sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					
+					//Take the second needed resource.
+					if(Table.getItem(_need2)) {
+						System.out.println("Smoker["+ID+"] takes " + resources_name[_need2] + " from the table");
+						this.completeSmoke = true;
+					}else{
+						System.out.println("Smoker["+ID+"] found no " + resources_name[_need2] + " on the table");
+						System.out.println("!!!The Deadlock Happens!!!");
+					}
+				}
+				
+				//Complete to smoke and release the agent.
+				if(this.completeSmoke) {
+					this.completeSmoke = false;
+					System.out.println("***Smoker["+ID+"] complete the smoking.");
+					agentSemaphore.release();
 				}
 			}
 		}
 	}
 
 	private static class Table {
-		private static boolean[] resources = new boolean[3];
-
-		public static void put(int item) {
-			resources[item] = true;
-			System.out.println("put " + resources_name[item] + " in the table");
+		private static boolean[] resources = new boolean[] {false,false,false};
+		
+		//Put two items to the table.
+		public static void putItem(int item1,int item2,int ID) {
+			resources[item1] = resources[item2] = true;
+			System.out.println(resources_name[item1] + " and " + resources_name[item2] + " are put on the table.");
 		}
-
-		public static boolean use(int item) {
+		
+		//Get the item from the table.
+		public static boolean getItem(int item) {
 			if (resources[item]) {
 				resources[item] = false;
 				return true;
 			} else {
 				return false;
 			}
+		}
+		
+		//Check if the item is existed on the table.
+		public static boolean isItemExisted(int item) {
+			return resources[item];
 		}
 	}
 

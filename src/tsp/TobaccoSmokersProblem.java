@@ -53,7 +53,7 @@ public class TobaccoSmokersProblem {
 			while (true) {
 				// Set the random delay time for the agent thread.
 				try {
-					sleep((int) (Math.random() * 6000 + 2000));
+					sleep((int) (Math.random() * 4000 + 2000));
 					agentSemaphore.acquire();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -90,7 +90,7 @@ public class TobaccoSmokersProblem {
 			while (true) {
 				// Set the random delay time for the smoker thread.
 				try {
-					sleep((int) (Math.random() * 1500 + 1000));
+					sleep((int) (Math.random() * 2000 + 1000));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

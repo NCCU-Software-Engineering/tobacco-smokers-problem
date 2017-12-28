@@ -116,6 +116,9 @@ public class TobaccoSmokersProblemDeadlockTest {
 					if(Table.getItem(_need1)) {
 						mygui.get(ID, resources_name[_need1]);
 						System.out.println("Smoker[" + ID + "] takes " + resources_name[_need1] + " from the table");
+					} else {
+						smokerSemaphore[ID].release();
+						continue;
 					}
 
 					// Set delay for taking the second needed resource.

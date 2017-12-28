@@ -1,5 +1,6 @@
 package tsp;
 
+import java.util.Random;
 import java.util.concurrent.Semaphore;
 
 public class TobaccoSmokersProblemDeadlockTest {
@@ -15,6 +16,7 @@ public class TobaccoSmokersProblemDeadlockTest {
 	static Semaphore[] smokerSemaphore = new Semaphore[3];
 
 	public static MyGUI mygui = new MyGUI("Tobacco Smokers Problem Deadlock");
+	public static Random random = new Random();
 
 	public static void main(String[] args) {
 
@@ -53,21 +55,21 @@ public class TobaccoSmokersProblemDeadlockTest {
 			while (true) {
 				// Set the random delay time for the agent thread.
 				try {
-					sleep((int) (Math.random() * 4000 + 2000));
+					sleep((int) (myRandom() * 4000)+ 1000);
 					agentSemaphore.acquire();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				// Put two resources to the table and release the called smoker.
 				mygui.put(resources_name[_offer1], resources_name[_offer2]);
-				try {
-					sleep(2000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 				System.out.println(
 						"Agent puts " + resources_name[_offer1] + " and " + resources_name[_offer2] + " to the table.");
 				Table.putItem(_offer1, _offer2);
+				try {
+					sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				smokerSemaphore[called_smoker].release();
 			}
 		}
@@ -90,13 +92,13 @@ public class TobaccoSmokersProblemDeadlockTest {
 			while (true) {
 				// Set the random delay time for the smoker thread.
 				try {
-					sleep((int) (Math.random() * 2000 + 1000));
+					sleep((int) (myRandom() * 8000)+ 2000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 
 				// Random the two needed resources.
-				if ((int) (Math.random() * 2) == 0) {
+				if ((int) (myRandom() * 2) == 0) {
 					int temp = this._need1;
 					this._need1 = this._need2;
 					this._need2 = temp;
@@ -115,7 +117,7 @@ public class TobaccoSmokersProblemDeadlockTest {
 
 					// Set delay for taking the second needed resource.
 					try {
-						sleep(500);
+						sleep((int) (myRandom() * 2000) + 300);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -126,9 +128,9 @@ public class TobaccoSmokersProblemDeadlockTest {
 						System.out.println("Smoker[" + ID + "] takes " + resources_name[_need2] + " from the table");
 						this.completeSmoke = true;
 					} else {
-						mygui.anger(ID);
 						System.out.println("Smoker[" + ID + "] found no " + resources_name[_need2] + " on the table");
 						System.out.println("!!!The Deadlock Happens!!!");
+						mygui.anger(ID);
 					}
 				}
 
@@ -136,7 +138,7 @@ public class TobaccoSmokersProblemDeadlockTest {
 				if (this.completeSmoke) {
 					this.completeSmoke = false;
 					try {
-						sleep(2000);
+						sleep(500);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -179,4 +181,16 @@ public class TobaccoSmokersProblemDeadlockTest {
 		}
 	}
 
+	private static double myRandom() {
+
+		double u = random.nextDouble();
+
+		int x = 0;
+		double cdf = 0;
+		while (u >= cdf) {
+			x++;
+			cdf = 1 - Math.exp(-1.0 * 0.1 * x);
+		}
+		return (double) (x) / 100;
+	}
 }

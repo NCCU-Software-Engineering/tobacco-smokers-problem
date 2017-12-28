@@ -56,7 +56,7 @@ public class TobaccoSmokersProblem {
 			while (true) {
 				// Set the random delay time for the agent thread.
 				try {
-					sleep((int) (myRandom() * 10000)+ 4000);
+					sleep((int) (myRandom() * 50000)+ 1000);
 					agentSemaphore.acquire();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -109,12 +109,15 @@ public class TobaccoSmokersProblem {
 				if (Table.isItemExisted(_need1)) {
 					try {
 						smokerSemaphore[ID].acquire();
+						sleep((int) (myRandom() * 8000)+ 1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					Table.getItem(_need1);
-					mygui.get(ID, resources_name[_need1]);
-					System.out.println("Smoker[" + ID + "] takes " + resources_name[_need1] + " from the table");
+					
+					if(Table.getItem(_need1)) {
+						mygui.get(ID, resources_name[_need1]);
+						System.out.println("Smoker[" + ID + "] takes " + resources_name[_need1] + " from the table");
+					}
 
 					// Set delay for taking the second needed resource.
 					try {

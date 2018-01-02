@@ -12,8 +12,10 @@ Tobacco Smokers (TS) Problem的問題情境為，有三種材料Tobacco(菸草)�
 如果兩個Smokers擅自各搶奪桌上一種材料，如此一來，沒有Smoker可以完成製菸，也沒有Smoker可以抽菸後叫醒Agent繼續發放材料，至此階段發生Deadlock，沒有後續，動作完全停止。
 
 ## Deadlock解法
-首先按照題目要求使用六個Threads(三個Agent、三個Smoker)
-之後使用三個Semaphore控管Smokers，Agent確定發放的兩種材料後叫醒Smoker於Table取材料。再一個Semaphore讓Smoker叫醒Agent繼續發放材料。
+首先按照題目要求使用六個Threads(三個Agent、三個Smoker)，之後使用三個Semaphore控管Smokers，Agent確定發放的兩種材料後叫醒Smoker於Table取材料。再一個Semaphore讓Smoker叫醒Agent繼續發放材料。
+
+## 亂數產生
+使用Exponential Distribution的CDF公式求出隨機項數x，x作為亂數使用於程式中。
 
 ## GUI
 使用java swing製作，提供5個api供主程式使用。

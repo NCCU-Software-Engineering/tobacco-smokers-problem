@@ -1,5 +1,8 @@
 # Multi-Thread Synchronization Problem
 
+### 2017 Academic Year OS Team 2
+### Team Members : 賴晨和、Roger Chu
+
 ## Tobacco Smokers (TS) Problem
 Three smokers sit around a table. Each has a permanent supply of precisely one of three resources, namely tobacco, cigarette papers, and matches, but is not permitted to give any of this resource to a neighbor. An agent occasionally makes available a supply of two of the three resources. The smoker who has the permanent supply of the remaining resource is then in a position to make and smoke a cigarette. On finishing the cigarette this smoker signals the agent, and the agent may then make again available a supply of some two resources.
 
